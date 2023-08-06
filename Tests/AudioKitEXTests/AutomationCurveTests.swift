@@ -1,13 +1,12 @@
 // Copyright AudioKit. All Rights Reserved. Revision History at http://github.com/AudioKit/AudioKit/
 
-import XCTest
 import AudioKit
-import CAudioKitEX
-import AVFoundation
 import AudioKitEX
+import AVFoundation
+import CAudioKitEX
+import XCTest
 
 class AutomationCurveTests: XCTestCase {
-
     typealias Point = ParameterAutomationPoint
 
     func testReplaceAutomationBasic() {
@@ -15,14 +14,14 @@ class AutomationCurveTests: XCTestCase {
                                              Point(targetValue: 880, startTime: 1, rampDuration: 0.1),
                                              Point(targetValue: 440, startTime: 2, rampDuration: 0.1)])
 
-        let events: [(Float, AUValue)] = [ (0.5, 100), (1.5, 200) ]
+        let events: [(Float, AUValue)] = [(0.5, 100), (1.5, 200)]
 
         let newCurve = curve.replace(range: 0.25 ... 1.75, withPoints: events)
 
-        let expected = [ Point(targetValue: 440, startTime: 0.0, rampDuration: 0.1),
-                         Point(targetValue: 100, startTime: 0.5, rampDuration: 0.01),
-                         Point(targetValue: 200, startTime: 1.5, rampDuration: 0.01),
-                         Point(targetValue: 440, startTime: 2.0, rampDuration: 0.1)]
+        let expected = [Point(targetValue: 440, startTime: 0.0, rampDuration: 0.1),
+                        Point(targetValue: 100, startTime: 0.5, rampDuration: 0.01),
+                        Point(targetValue: 200, startTime: 1.5, rampDuration: 0.01),
+                        Point(targetValue: 440, startTime: 2.0, rampDuration: 0.1)]
 
         XCTAssertEqual(newCurve.points, expected)
     }
@@ -32,7 +31,7 @@ class AutomationCurveTests: XCTestCase {
                                              Point(targetValue: 880, startTime: 1, rampDuration: 0.1),
                                              Point(targetValue: 440, startTime: 2, rampDuration: 0.1)])
 
-        let events: [(Float, AUValue)] = [ ]
+        let events: [(Float, AUValue)] = []
 
         let newCurve = curve.replace(range: 0 ... 2, withPoints: events)
 
@@ -42,12 +41,12 @@ class AutomationCurveTests: XCTestCase {
     func testReplaceAutomationAdd() {
         let curve = AutomationCurve(points: [])
 
-        let events: [(Float, AUValue)] = [ (0.5, 100), (1.5, 200) ]
+        let events: [(Float, AUValue)] = [(0.5, 100), (1.5, 200)]
 
         let newCurve = curve.replace(range: 0 ... 2, withPoints: events)
 
-        let expected = [ Point(targetValue: 100, startTime: 0.5, rampDuration: 0.01),
-                         Point(targetValue: 200, startTime: 1.5, rampDuration: 0.01)]
+        let expected = [Point(targetValue: 100, startTime: 0.5, rampDuration: 0.01),
+                        Point(targetValue: 200, startTime: 1.5, rampDuration: 0.01)]
 
         XCTAssertEqual(newCurve.points, expected)
     }
@@ -63,12 +62,11 @@ class AutomationCurveTests: XCTestCase {
     }
 
     func testEvaluateAutomationAlmostLinear() {
-
         let curve = AutomationCurve(points: [Point(targetValue: 1,
-                                                     startTime: 0,
-                                                     rampDuration: 1.0,
-                                                     rampTaper: 1.0,
-                                                     rampSkew: 0.000001)])
+                                                   startTime: 0,
+                                                   rampDuration: 1.0,
+                                                   rampTaper: 1.0,
+                                                   rampSkew: 0.000001)])
 
         let events = curve.evaluate(initialValue: 0, resolution: 0.5)
 
@@ -80,12 +78,11 @@ class AutomationCurveTests: XCTestCase {
     }
 
     func testEvaluateAutomationSlightTaper() {
-
         let curve = AutomationCurve(points: [Point(targetValue: 1,
-                                                     startTime: 0,
-                                                     rampDuration: 1.0,
-                                                     rampTaper: 1.00001,
-                                                     rampSkew: 0.0)])
+                                                   startTime: 0,
+                                                   rampDuration: 1.0,
+                                                   rampTaper: 1.00001,
+                                                   rampSkew: 0.0)])
 
         let events = curve.evaluate(initialValue: 0,
                                     resolution: 0.5)
@@ -98,30 +95,27 @@ class AutomationCurveTests: XCTestCase {
     }
 
     func testEvaluateAutomationCurved() {
-
         let curve = AutomationCurve(points: [Point(targetValue: 1,
-                                                     startTime: 0,
-                                                     rampDuration: 1.0,
-                                                     rampTaper: 0.5,
-                                                     rampSkew: 0.1)])
+                                                   startTime: 0,
+                                                   rampDuration: 1.0,
+                                                   rampTaper: 0.5,
+                                                   rampSkew: 0.1)])
 
         let events = curve.evaluate(initialValue: 0, resolution: 0.1)
 
         XCTAssertEqual(events.count, 10)
-
     }
 
     func testEvaluateAutomationTwoSegment() {
-
         // One linear, one curved segment.
         let curve = AutomationCurve(points: [Point(targetValue: 1,
-                                                     startTime: 0,
-                                                     rampDuration: 1.0),
-                                               Point(targetValue: 0,
-                                                     startTime: 1.0,
-                                                     rampDuration: 1.0,
-                                                     rampTaper: 1.0,
-                                                     rampSkew: 0.000001)])
+                                                   startTime: 0,
+                                                   rampDuration: 1.0),
+                                             Point(targetValue: 0,
+                                                   startTime: 1.0,
+                                                   rampDuration: 1.0,
+                                                   rampTaper: 1.0,
+                                                   rampSkew: 0.000001)])
 
         let events = curve.evaluate(initialValue: 0, resolution: 0.5)
 
@@ -133,20 +127,18 @@ class AutomationCurveTests: XCTestCase {
 
         XCTAssertEqual(events[2].startTime, 1.5)
         XCTAssert(abs(events[2].targetValue) < 0.0001)
-
     }
 
     func testEvaluateAutomationTwoSegment2() {
-
         // Curved segment cut off by linear segment.
         let curve = AutomationCurve(points: [Point(targetValue: 1,
-                                                     startTime: 0,
-                                                     rampDuration: 2.0,
-                                                     rampTaper: 1.0,
-                                                     rampSkew: 0.000001),
-                                               Point(targetValue: 1,
-                                                     startTime: 1,
-                                                     rampDuration: 0.0)])
+                                                   startTime: 0,
+                                                   rampDuration: 2.0,
+                                                   rampTaper: 1.0,
+                                                   rampSkew: 0.000001),
+                                             Point(targetValue: 1,
+                                                   startTime: 1,
+                                                   rampDuration: 0.0)])
 
         let events = curve.evaluate(initialValue: 0, resolution: 0.5)
 
@@ -160,6 +152,5 @@ class AutomationCurveTests: XCTestCase {
         XCTAssertEqual(events[2].startTime, 1.0)
         XCTAssertEqual(events[2].targetValue, 1.0)
         XCTAssertEqual(events[2].rampDuration, 0.0)
-
     }
 }

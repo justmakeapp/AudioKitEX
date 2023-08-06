@@ -1,7 +1,7 @@
 // Copyright AudioKit. All Rights Reserved. Revision History at http://github.com/AudioKit/AudioKit/
 
-import AVFoundation
 import AudioKit
+import AVFoundation
 
 /// To allow nodes to be triggered
 public protocol Triggerable {
@@ -9,9 +9,9 @@ public protocol Triggerable {
     func trigger()
 }
 
-extension Node where Self: Triggerable {
+public extension Node where Self: Triggerable {
     /// Trigger the sound with current parameters
-    public func trigger() {
+    func trigger() {
         au.trigger()
     }
 }
@@ -24,17 +24,16 @@ public protocol Gated {
     func closeGate()
 }
 
-extension Node where Self: Gated {
+public extension Node where Self: Gated {
     /// Start the gate
-    public func openGate() {
+    func openGate() {
         au.trigger()
     }
-    
+
     /// Stop the gate
-    public func closeGate() {
+    func closeGate() {
         au.detrigger()
     }
-
 }
 
 /// To allow nodes to be triggered via MIDI info
@@ -48,14 +47,14 @@ public protocol MIDITriggerable {
     func trigger(note: MIDINoteNumber, velocity: MIDIVelocity)
 }
 
-extension Node where Self: MIDITriggerable {
+public extension Node where Self: MIDITriggerable {
     /// Trigger the sound with a set of parameters
     ///
     /// - Parameters:
     ///   - note: MIDI note number
     ///   - velocity: Amplitude or volume expressed as a MIDI Velocity 0-127
     ///
-    public func trigger(note: MIDINoteNumber, velocity: MIDIVelocity = 127) {
+    func trigger(note: MIDINoteNumber, velocity: MIDIVelocity = 127) {
         start()
         au.trigger(note: note, velocity: velocity)
     }

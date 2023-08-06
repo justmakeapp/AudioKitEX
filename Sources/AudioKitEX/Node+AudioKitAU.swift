@@ -1,14 +1,13 @@
 // Copyright AudioKit. All Rights Reserved. Revision History at http://github.com/AudioKit/AudioKit/
 
+import AudioKit
 import AVFoundation
 import CAudioKitEX
-import AudioKit
 
 /// Convenience for getting the AudioKitAU from a Node.
-extension Node {
-
+public extension Node {
     /// Audio Unit for AudioKit
-    public var au: AudioKitAU {
+    var au: AudioKitAU {
         guard let au = avAudioNode.auAudioUnit as? AudioKitAU else {
             fatalError("Wrong audio unit type.")
         }
@@ -19,7 +18,6 @@ extension Node {
 /// Create an AVAudioUnit for the given description
 /// - Parameter componentDescription: Audio Component Description
 func instantiate(componentDescription: AudioComponentDescription) -> AVAudioUnit {
-
     let semaphore = DispatchSemaphore(value: 0)
     var result: AVAudioUnit!
 

@@ -1,14 +1,13 @@
 // Copyright AudioKit. All Rights Reserved. Revision History at http://github.com/AudioKit/AudioKit/
 
+import AudioKit
 import AVFoundation
 import CAudioKitEX
-import AudioKit
 
 /// Stereo Fader.
 public class Fader: Node {
-
     let input: Node
-    
+
     /// Connected nodes
     public var connections: [Node] { [input] }
 
@@ -35,7 +34,8 @@ public class Fader: Node {
         address: akGetParameterAddress("FaderParameterLeftGain"),
         defaultValue: 1,
         range: Fader.gainRange,
-        unit: .linearGain)
+        unit: .linearGain
+    )
 
     /// Left Channel Amplification Factor
     @Parameter(leftGainDef) public var leftGain: AUValue
@@ -47,7 +47,8 @@ public class Fader: Node {
         address: akGetParameterAddress("FaderParameterRightGain"),
         defaultValue: 1,
         range: Fader.gainRange,
-        unit: .linearGain)
+        unit: .linearGain
+    )
 
     /// Right Channel Amplification Factor
     @Parameter(rightGainDef) public var rightGain: AUValue
@@ -65,7 +66,8 @@ public class Fader: Node {
         address: akGetParameterAddress("FaderParameterFlipStereo"),
         defaultValue: 0,
         range: 0.0 ... 1.0,
-        unit: .boolean)
+        unit: .boolean
+    )
 
     /// Flip left and right signal
     @Parameter(flipStereoDef) public var flipStereo: Bool
@@ -77,7 +79,8 @@ public class Fader: Node {
         address: akGetParameterAddress("FaderParameterMixToMono"),
         defaultValue: 0,
         range: 0.0 ... 1.0,
-        unit: .boolean)
+        unit: .boolean
+    )
 
     /// Make the output on left and right both be the same combination of incoming left and mixed equally
     @Parameter(mixToMonoDef) public var mixToMono: Bool
@@ -92,9 +95,9 @@ public class Fader: Node {
     ///
     public init(_ input: Node, gain: AUValue = 1) {
         self.input = input
-        
+
         setupParameters()
-        
+
         leftGain = gain
         rightGain = gain
         flipStereo = false

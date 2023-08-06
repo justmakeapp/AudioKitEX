@@ -1,14 +1,13 @@
 // Copyright AudioKit. All Rights Reserved. Revision History at http://github.com/AudioKit/AudioKit/
 
-import Foundation
 @testable import AudioKit
-import GameplayKit
-import AVFoundation
-import XCTest
 import AudioKitEX
+import AVFoundation
+import Foundation
+import GameplayKit
+import XCTest
 
 func setParams(node: Node, rng: GKRandomSource) {
-
     for param in node.parameters {
         let def = param.def
         let size = def.range.upperBound - def.range.lowerBound
@@ -16,13 +15,10 @@ func setParams(node: Node, rng: GKRandomSource) {
         print("setting parameter \(def.name) to \(value)")
         param.value = value
     }
-
 }
 
 class GenericNodeTests: XCTestCase {
-
-    func nodeRandomizedTest(md5: String, factory: ()->Node, audition: Bool = false) {
-
+    func nodeRandomizedTest(md5: String, factory: () -> Node, audition: Bool = false) {
         // We want determinism.
         let rng = GKMersenneTwisterRandomSource(seed: 0)
 
@@ -31,7 +27,6 @@ class GenericNodeTests: XCTestCase {
         var bigBuffer: AVAudioPCMBuffer? = nil
 
         for _ in 0 ..< duration {
-
             let node = factory()
             engine.output = node
 
@@ -42,7 +37,10 @@ class GenericNodeTests: XCTestCase {
             audio.append(engine.render(duration: 1.0))
 
             if bigBuffer == nil {
-                bigBuffer = AVAudioPCMBuffer(pcmFormat: audio.format, frameCapacity: audio.frameLength*UInt32(duration))
+                bigBuffer = AVAudioPCMBuffer(
+                    pcmFormat: audio.format,
+                    frameCapacity: audio.frameLength * UInt32(duration)
+                )
             }
 
             bigBuffer?.append(audio)
@@ -55,8 +53,7 @@ class GenericNodeTests: XCTestCase {
         XCTAssertEqual(bigBuffer!.md5, md5)
     }
 
-    func nodeParameterTest(md5: String, factory: (Node)->Node, m1MD5: String = "", audition: Bool = false) {
-
+    func nodeParameterTest(md5: String, factory: (Node) -> Node, m1MD5: String = "", audition: Bool = false) {
         let url = Bundle.module.url(forResource: "12345", withExtension: "wav", subdirectory: "TestResources")!
         let player = AudioPlayer(url: url)!
         let node = factory(player)
@@ -80,7 +77,6 @@ class GenericNodeTests: XCTestCase {
         }
 
         for i in 0 ..< node.parameters.count {
-
             let node = factory(player)
             engine.output = node
 
@@ -95,7 +91,6 @@ class GenericNodeTests: XCTestCase {
             audio.append(engine.render(duration: 1.0))
 
             bigBuffer?.append(audio)
-
         }
 
         XCTAssertFalse(bigBuffer!.isSilent)
@@ -109,5 +104,4 @@ class GenericNodeTests: XCTestCase {
     func testEffects() {
         nodeParameterTest(md5: "8c5c55d9f59f471ca1abb53672e3ffbf", factory: { input in StereoFieldLimiter(input) })
     }
-
 }

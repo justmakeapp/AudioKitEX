@@ -1,23 +1,23 @@
 // Copyright AudioKit. All Rights Reserved. Revision History at http://github.com/AudioKit/AudioKit/
 
-import XCTest
 import AudioKit
-import CAudioKitEX
 import AVFoundation
+import CAudioKitEX
+import XCTest
 
 class ParameterAutomationTests: XCTestCase {
-
-    func observerTest(events: [AutomationEvent],
-                      sampleTime: Float64,
-                      startTime: Double = 0) -> ([AUParameterAddress], [(AUValue, AUEventSampleTime)], [AUAudioFrameCount]) {
-
+    func observerTest(
+        events: [AutomationEvent],
+        sampleTime: Float64,
+        startTime: Double = 0
+    ) -> ([AUParameterAddress], [(AUValue, AUEventSampleTime)], [AUAudioFrameCount]) {
         let address = AUParameterAddress(42)
 
         var addresses: [AUParameterAddress] = []
         var values: [(AUValue, AUEventSampleTime)] = []
         var durations: [AUAudioFrameCount] = []
 
-        let scheduleParameterBlock: AUScheduleParameterBlock = { (sampleTime, rampDuration, address, value) in
+        let scheduleParameterBlock: AUScheduleParameterBlock = { sampleTime, rampDuration, address, value in
             addresses.append(address)
             values.append((value, sampleTime))
             durations.append(rampDuration)
@@ -26,7 +26,7 @@ class ParameterAutomationTests: XCTestCase {
         let observer: AURenderObserver = events.withUnsafeBufferPointer { automationPtr in
             ParameterAutomationGetRenderObserver(address,
                                                  scheduleParameterBlock,
-                                                 44100,
+                                                 44_100,
                                                  startTime,
                                                  automationPtr.baseAddress!,
                                                  events.count)
@@ -41,7 +41,6 @@ class ParameterAutomationTests: XCTestCase {
     }
 
     func testSimpleAutomation() throws {
-
         let events = [AutomationEvent(targetValue: 880, startTime: 0, rampDuration: 0)]
 
         let (addresses, values, _) = observerTest(events: events, sampleTime: 0)
@@ -52,10 +51,9 @@ class ParameterAutomationTests: XCTestCase {
     }
 
     func testSimpleAutomationWithBigValues() throws {
-
         let events = [AutomationEvent(targetValue: 880, startTime: 0, rampDuration: 0)]
 
-        let (addresses, values, _) = observerTest(events: events, sampleTime: 1000000000, startTime: 1000000001)
+        let (addresses, values, _) = observerTest(events: events, sampleTime: 1_000_000_000, startTime: 1_000_000_001)
 
         // order is: taper, skew, offset, value
         XCTAssertEqual(addresses, [42])
@@ -64,10 +62,9 @@ class ParameterAutomationTests: XCTestCase {
     }
 
     func testPastAutomation() {
+        let events = [AutomationEvent(targetValue: 880, startTime: 0, rampDuration: 0.1)]
 
-        let events = [ AutomationEvent(targetValue: 880, startTime: 0, rampDuration: 0.1) ]
-
-        let (addresses, values, _) = observerTest(events: events, sampleTime: 44100)
+        let (addresses, values, _) = observerTest(events: events, sampleTime: 44_100)
 
         // If the automation is in the past, the value should be set to the final value.
         XCTAssertEqual(addresses, [42])
@@ -75,21 +72,18 @@ class ParameterAutomationTests: XCTestCase {
     }
 
     func testPastAutomationTwo() {
+        let events = [AutomationEvent(targetValue: 880, startTime: 0, rampDuration: 0.1),
+                      AutomationEvent(targetValue: 440, startTime: 0.1, rampDuration: 0.1)]
 
-        let events = [ AutomationEvent(targetValue: 880, startTime: 0, rampDuration: 0.1),
-                       AutomationEvent(targetValue: 440, startTime: 0.1, rampDuration: 0.1) ]
-
-        let (addresses, values, _) = observerTest(events: events, sampleTime: 44100)
+        let (addresses, values, _) = observerTest(events: events, sampleTime: 44_100)
 
         // If the automation is in the past, the value should be set to the final value.
         XCTAssertEqual(addresses, [42])
         XCTAssertEqual(values.map(\.0), [440.0])
-
     }
 
     func testFutureAutomation() {
-
-        let events = [ AutomationEvent(targetValue: 880, startTime: 1, rampDuration: 0.1) ]
+        let events = [AutomationEvent(targetValue: 880, startTime: 1, rampDuration: 0.1)]
 
         let (addresses, values, _) = observerTest(events: events, sampleTime: 0)
 
@@ -99,7 +93,6 @@ class ParameterAutomationTests: XCTestCase {
     }
 
     func testAutomationMiddle() {
-
         // Start automating in the middle of a segment.
 
         let events = [AutomationEvent(targetValue: 1, startTime: 0, rampDuration: 1.0)]
@@ -108,11 +101,10 @@ class ParameterAutomationTests: XCTestCase {
 
         XCTAssertEqual(addresses, [42])
         XCTAssertEqual(values.map(\.0), [1.0])
-        XCTAssertEqual(durations, [UInt32(44100-128)])
+        XCTAssertEqual(durations, [UInt32(44_100 - 128)])
     }
 
     func testRecord() {
-
         let engine = AudioEngine()
 
         let url = Bundle.module.url(forResource: "12345", withExtension: "wav", subdirectory: "TestResources")!
@@ -125,9 +117,9 @@ class ParameterAutomationTests: XCTestCase {
         player.volume = 0
         player.play()
 
-        var values:[AUValue] = []
+        var values: [AUValue] = []
 
-        delay.$feedback.recordAutomation { (event) in
+        delay.$feedback.recordAutomation { event in
             values.append(event.value)
         }
 
@@ -147,5 +139,4 @@ class ParameterAutomationTests: XCTestCase {
 
         XCTAssertEqual(values, [0.7])
     }
-
 }

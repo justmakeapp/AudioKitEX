@@ -26,5 +26,4 @@ let validatedMD5s: [String: String] = [
     "-[DryWetMixerTests testBalance1]": "3932bc5d49cbefd4a9dd587d16f4b81c",
     "-[DryWetMixerTests testDefault]": "45a639729d8698a28f134bbe4ccc9d6c",
     "-[DryWetMixerTests testDuplicateInput]": "789c1e77803a4f9d10063eb60ca03cea",
-
 ]

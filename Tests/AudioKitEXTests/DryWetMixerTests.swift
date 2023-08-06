@@ -7,7 +7,7 @@ import XCTest
 
 class DryWetMixerTests: XCTestCase {
     let input1 = PlaygroundOscillator(waveform: Table(.triangle))
-    let input2 = PlaygroundOscillator(waveform: Table(.triangle), frequency: 1280)
+    let input2 = PlaygroundOscillator(waveform: Table(.triangle), frequency: 1_280)
 
     func testDefault() {
         let engine = AudioEngine()
